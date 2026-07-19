@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, Edit3, Settings, Sparkles, ShoppingBag, RotateCcw, Type, Image } from 'lucide-react';
+import { Eye, Settings, Sparkles, ShoppingBag, RotateCcw, Type, Image } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import TShirtSVG from './TShirtSVG';
 
