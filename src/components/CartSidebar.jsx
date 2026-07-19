@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useStore } from '../context/StoreContext';
 
 const CartSidebar = () => {
   const {
@@ -12,6 +14,8 @@ const CartSidebar = () => {
     clearCart,
     totalAmount
   } = useCart();
+  const { currentUser } = useAuth();
+  const { placeOrder } = useStore();
 
   const [checkoutStep, setCheckoutStep] = useState('cart'); // cart, success
   const [orderNumber, setOrderNumber] = useState('');
@@ -19,9 +23,13 @@ const CartSidebar = () => {
   if (!isCartOpen) return null;
 
   const handleCheckout = () => {
-    // Simulate order placement
-    const mockOrderNum = 'ADX-' + Math.floor(100000 + Math.random() * 900000);
-    setOrderNumber(mockOrderNum);
+    const order = placeOrder({
+      items: cartItems,
+      totalAmount,
+      customer: currentUser,
+    });
+
+    setOrderNumber(order.id);
     setCheckoutStep('success');
   };
 
@@ -140,7 +148,7 @@ const CartSidebar = () => {
                 Order Placed!
               </h4>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-                Your custom AdrenaX order has been logged into the queue.
+                Your AdrenaX order has been captured and sent into the admin queue.
               </p>
             </div>
 
