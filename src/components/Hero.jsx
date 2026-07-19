@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, Zap, Target, Award } from 'lucide-react';
-import TShirtSVG from './TShirtSVG';
+import AdrenaXLogo from './AdrenaXLogo';
+import { useStore } from '../context/StoreContext';
+
+const HERO_SHOWCASE_COLORS = ['#00f2fe', '#39ff14', '#ff5e36', '#f80077', '#ffffff', '#12151c'];
 
 const Hero = ({ setCurrentPage }) => {
   const [showcaseColor, setShowcaseColor] = useState('#00f2fe');
-  const colors = ['#00f2fe', '#39ff14', '#ff5e36', '#f80077', '#ffffff', '#12151c'];
+  const { siteContent } = useStore();
 
   useEffect(() => {
     const interval = setInterval(() => {
       setShowcaseColor((prev) => {
-        const currentIndex = colors.indexOf(prev);
-        const nextIndex = (currentIndex + 1) % colors.length;
-        return colors[nextIndex];
+        const currentIndex = HERO_SHOWCASE_COLORS.indexOf(prev);
+        const nextIndex = (currentIndex + 1) % HERO_SHOWCASE_COLORS.length;
+        return HERO_SHOWCASE_COLORS[nextIndex];
       });
     }, 3000);
     return () => clearInterval(interval);
@@ -69,7 +72,7 @@ const Hero = ({ setCurrentPage }) => {
               marginBottom: '24px',
             }}>
               <Sparkles size={14} />
-              <span>Est. 2026 // Next-Gen Activewear</span>
+              <span>{siteContent.heroBadge}</span>
             </div>
 
             {/* Headline */}
@@ -81,8 +84,10 @@ const Hero = ({ setCurrentPage }) => {
               marginBottom: '24px',
               letterSpacing: '-0.03em',
             }}>
-              ELEVATE YOUR <br />
-              <span className="text-gradient">MOTION.</span> DEFINE YOUR <span className="text-gradient-orange">STYLE.</span>
+              {siteContent.heroLead} <br />
+              <span className="text-gradient">{siteContent.heroHighlight}</span>{' '}
+              {siteContent.heroSubLead}{' '}
+              <span className="text-gradient-orange">{siteContent.heroAccent}</span>
             </h1>
 
             {/* Sub-headline */}
@@ -94,7 +99,7 @@ const Hero = ({ setCurrentPage }) => {
               fontWeight: 400,
               lineHeight: 1.6,
             }}>
-              Engineered high-performance activewear and streetwear classics. Crafted for ultimate comfort, custom expression, and maximum endurance. Est. 2026.
+              {siteContent.heroDescription}
             </p>
 
             {/* CTAs */}
@@ -110,7 +115,7 @@ const Hero = ({ setCurrentPage }) => {
                 style={{ fontSize: '1.05rem', padding: '16px 36px' }}
                 id="hero-shop-btn"
               >
-                Shop Collection <ArrowRight size={18} />
+                {siteContent.heroPrimaryCta} <ArrowRight size={18} />
               </button>
               <button
                 onClick={() => setCurrentPage('customizer')}
@@ -118,7 +123,7 @@ const Hero = ({ setCurrentPage }) => {
                 style={{ fontSize: '1.05rem', padding: '16px 36px' }}
                 id="hero-customize-btn"
               >
-                Design Custom Tee
+                {siteContent.heroSecondaryCta}
               </button>
             </div>
 
@@ -175,7 +180,7 @@ const Hero = ({ setCurrentPage }) => {
               pointerEvents: 'none',
             }} />
 
-            {/* Showcase Shirt Wrapper */}
+            {/* Showcase Logo Wrapper */}
             <div style={{
               width: '100%',
               maxWidth: '400px',
@@ -185,18 +190,17 @@ const Hero = ({ setCurrentPage }) => {
               justifyContent: 'center',
               zIndex: 2,
             }}>
-              <TShirtSVG 
-                color={showcaseColor} 
-                view="front" 
-                customText="AdrenaX"
-                customTextColor={showcaseColor === '#ffffff' ? '#000000' : '#ffffff'}
-                customFont="Outfit"
-                textScale={0.8}
-                textPosition={{ x: 50, y: 55 }}
-                customLogo="adrenax-icon"
-                logoScale={1}
-                logoPosition={{ x: 50, y: 35 }}
-              />
+              <div style={{
+                width: '65%',
+                height: '65%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                filter: `drop-shadow(0 0 35px ${showcaseColor}60)`,
+                transition: 'all 0.5s ease',
+              }}>
+                <AdrenaXLogo color={showcaseColor} />
+              </div>
             </div>
 
             {/* Showcase Controls Hover overlay */}
