@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
-import { Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { useStore } from '../context/StoreContext';
 
 const Footer = ({ setCurrentPage }) => {
   const [email, setEmail] = useState('');
-  const [signedUp, setSignedUp] = useState(false);
+  const [signupNotice, setSignupNotice] = useState(null);
+  const { addSubscriber } = useStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (email.trim()) {
-      setSignedUp(true);
-      setEmail('');
-      setTimeout(() => setSignedUp(false), 5000);
+      const result = addSubscriber(email);
+      setSignupNotice(result);
+
+      if (result.ok) {
+        setEmail('');
+      }
+
+      setTimeout(() => setSignupNotice(null), 5000);
     }
   };
 
@@ -133,21 +140,23 @@ const Footer = ({ setCurrentPage }) => {
               Subscribe to get early access to drops, activewear updates, and custom product designs.
             </p>
             
-            {signedUp ? (
+            {signupNotice ? (
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                color: 'var(--accent-lime)',
+                color: signupNotice.ok ? 'var(--accent-lime)' : '#fff',
                 fontSize: '0.95rem',
                 fontWeight: 600,
-                background: 'rgba(57, 255, 20, 0.08)',
+                background: signupNotice.ok ? 'rgba(57, 255, 20, 0.08)' : 'rgba(255, 94, 54, 0.08)',
                 padding: '12px',
                 borderRadius: '8px',
-                border: '1px solid rgba(57, 255, 20, 0.2)',
+                border: signupNotice.ok
+                  ? '1px solid rgba(57, 255, 20, 0.2)'
+                  : '1px solid rgba(255, 94, 54, 0.24)',
               }}>
                 <CheckCircle2 size={18} />
-                <span>You're on the list! Welcome to AdrenaX.</span>
+                <span>{signupNotice.message}</span>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{
