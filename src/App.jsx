@@ -6,10 +6,15 @@ import Products from './components/Products';
 import Customizer from './components/Customizer';
 import About from './components/About';
 import CartSidebar from './components/CartSidebar';
+import LoginPage from './components/LoginPage';
+import AdminPanel from './components/AdminPanel';
 import { CartProvider } from './context/CartContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { StoreProvider } from './context/StoreContext';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState('home');
+  const { isAdmin } = useAuth();
 
   const renderPage = () => {
     switch (currentPage) {
@@ -27,6 +32,14 @@ function AppContent() {
         return <Customizer />;
       case 'about':
         return <About />;
+      case 'login':
+        return <LoginPage setCurrentPage={setCurrentPage} />;
+      case 'admin':
+        return isAdmin ? (
+          <AdminPanel setCurrentPage={setCurrentPage} />
+        ) : (
+          <LoginPage setCurrentPage={setCurrentPage} requiredRole="admin" />
+        );
       default:
         return <Hero setCurrentPage={setCurrentPage} />;
     }
@@ -39,16 +52,20 @@ function AppContent() {
         {renderPage()}
       </main>
       <CartSidebar />
-      <Footer setCurrentPage={setCurrentPage} />
+      {currentPage !== 'admin' ? <Footer setCurrentPage={setCurrentPage} /> : null}
     </>
   );
 }
 
 function App() {
   return (
-    <CartProvider>
-      <AppContent />
-    </CartProvider>
+    <StoreProvider>
+      <AuthProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </AuthProvider>
+    </StoreProvider>
   );
 }
 
